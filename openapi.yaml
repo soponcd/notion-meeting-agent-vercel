@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: Notion Meeting Agent API
+  version: 1.0.0
+servers:
+  - url: https://YOUR_VERCEL_URL
+paths:
+  /meetings.create:
+    post:
+      operationId: createMeeting
+      summary: 创建会议纪要
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, date, start, end]
+              properties:
+                title: { type: string, example: "东汽焊接工艺片会议" }
+                date:  { type: string, example: "2025-11-01" }
+                start: { type: string, example: "14:50" }
+                end:   { type: string, example: "15:02" }
+                attendees:
+                  type: array
+                  items: { type: string }
+                  example: ["周光洪","何芬"]
+                meeting_type: { type: string, example: "沟通会" }
+                content: { type: string, example: "直线焊接程序调整" }
+                decisions: { type: string, example: "采用哈佛603标准" }
+                todos: { type: string, example: "确认样片参数" }
+                status: { type: string, example: "草稿" }
+      responses:
+        "200":
+          description: 创建结果
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  id: { type: string, example: "page_id" }
+                  title: { type: string }
+      security:
+        - bearerAuth: []
+  /meetings.query:
+    post:
+      operationId: queryMeetings
+      summary: 查询会议纪要
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, example: "需跟进" }
+      responses:
+        "200":
+          description: 查询结果
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: true }
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string, example: "page_id" }
+                        title: { type: string, example: "会议主题" }
+                        date: { type: string, example: "2025-11-01" }
+                        status: { type: string, example: "草稿" }
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: APIKey
